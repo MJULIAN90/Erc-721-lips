@@ -40,7 +40,14 @@ const Home = () => {
       {walletAddress === "" ? (
         <Container flex={1} ai={"center"} jc={"center"}>
           <TextTitle> ¡WELCOME TO NTF GAMES!</TextTitle>
-          <ButtonCard onClick={connectToRopsten}>CONNECT TO ROPSTEN</ButtonCard>
+          {window.ethereum && (
+            <ButtonCard onClick={connectToRopsten}>
+              CONNECT TO ROPSTEN
+            </ButtonCard>
+          )}
+          {!window.ethereum && (
+            <a href='https://metamask.io/'>CONNECT TO YOUR WALLET</a>
+          )}
         </Container>
       ) : (
         <Container ai={"center"} style={{ padding: "10px" }}>
