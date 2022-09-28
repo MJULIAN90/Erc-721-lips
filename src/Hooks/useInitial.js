@@ -20,11 +20,19 @@ const useInitial = () => {
     window.ethereum.on("accountsChanged", () => {
       window.location.reload();
     });
+    window.ethereum.on('chainChanged', (_chainId) => window.location.reload());
   }, []);
 
   useEffect(() => {
     getNTFs();
   }, []);
+
+  const connectToRopsten = async () => {
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: `0x${Number(3).toString(16)}` }],
+    });
+  };
 
   // Get balance wallet
   const getBalanceWallet = useMemo(async () => {
@@ -144,6 +152,7 @@ const useInitial = () => {
     createNtfAlert,
     withdrawalOwner,
     messageAlertError,
+    connectToRopsten,
     balanceWallet,
     getFee,
     getOwner,

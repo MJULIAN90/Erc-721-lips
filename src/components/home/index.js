@@ -15,14 +15,6 @@ import { images } from "../../assets";
 import CardLips from "../CardLips";
 
 const Home = () => {
-
-  const connectToRopsten = async () => {
-    await window.ethereum.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId: `0x${Number(3).toString(16)}` }],
-    });
-  };
-
   const render = () => {
     const {
       walletAddress,
@@ -36,13 +28,23 @@ const Home = () => {
       createNtfAlert,
       withdrawalOwner,
       messageAlertError,
+      connectToRopsten,
     } = useInitial();
 
     const handleCreate = () => {
       if (balanceWallet > feeAmount) createNtfAlert(getCreateNTF);
       else messageAlertError("INSUFFICIENT BALANCE");
     };
-    
+
+    if (window.ethereum.chainId !== "0x3") {
+      return (
+        <Container flex={1} ai={"center"} jc={"center"}>
+          <TextTitle> ¡WELCOME TO NTF GAMES!</TextTitle>
+          <ButtonCard onClick={connectToRopsten}>CONNECT TO ROPSTEN</ButtonCard>
+        </Container>
+      );
+    }
+
     return (
       <Container ai={"center"} style={{ padding: "10px" }}>
         <ContainerHeader>
@@ -91,25 +93,20 @@ const Home = () => {
           </Container>
         )}
       </Container>
-    )
-  }
+    );
+  };
 
   return (
     <Screen image={images.bg1}>
       {!window.ethereum ? (
         <Container flex={1} ai={"center"} jc={"center"}>
           <TextTitle> ¡WELCOME TO NTF GAMES!</TextTitle>
-          {window.ethereum && (
-            <ButtonCard onClick={connectToRopsten}>
-              CONNECT TO ROPSTEN
-            </ButtonCard>
-          )}
           {!window.ethereum && (
             <a href='https://metamask.io/'>CONNECT TO YOUR WALLET</a>
           )}
         </Container>
       ) : (
-        render ()
+        render()
       )}
     </Screen>
   );
