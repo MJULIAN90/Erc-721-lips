@@ -20,7 +20,7 @@ const useInitial = () => {
     window.ethereum.on("accountsChanged", () => {
       window.location.reload();
     });
-    window.ethereum.on('chainChanged', (_chainId) => window.location.reload());
+    window.ethereum.on("chainChanged", (_chainId) => window.location.reload());
   }, []);
 
   useEffect(() => {
@@ -92,17 +92,24 @@ const useInitial = () => {
   // Mint new Token NFT
   const getCreateNTF = async (_name) => {
     try {
-      await contract.connect(signer).createRandomLip(_name, {
-        value: utils.parseEther(feeAmount),
-        gasLimit: 500000,
-      });
+      const createTocken = await contract
+        .connect(signer)
+        .createRandomLip(_name, {
+          value: utils.parseEther(feeAmount),
+          gasLimit: 500000,
+        });
 
-      setTimeout(() => {
+      messageAlert("This transaction may take a few moments");
+      const response = await createTocken.wait();
+      if (response.confirmations === 1) {
+        messageAlert("Ntf Created successful");
         getNTFs();
-      }, 10000);
-      return true;
+      } else {
+        throw new Error("Error creating your ntfs");
+      }
     } catch (error) {
-      messageAlertError("asdfsa");
+      messageAlertError("Error in red");
+      window.location.reload();
       console.log(error.message);
       return null;
     }
@@ -111,13 +118,17 @@ const useInitial = () => {
   // Get level to your ntfs
   const getUpLvl = async (_id) => {
     try {
-      await contract.levelUp(_id);
-
+      const lvlUp = await contract.levelUp(_id);
       messageAlert("This may take a few minutes");
 
-      setTimeout(() => {
+      const response = await lvlUp.wait();
+
+      if (response.confirmations === 1) {
+        messageAlert("Level up successful");
         getNTFs();
-      }, 20000);
+      } else {
+        throw new Error("Error Level up in ntf");
+      }
     } catch (error) {
       console.log(error);
     }

@@ -39,16 +39,7 @@ const useAlerts = () => {
       icon: "info",
       inputValidator: async (name) => {
         if (name) {
-          let response = await method(name);
-          if (!response) {
-            Swal.fire({ titleText: "TRANSACTION ERROR", icon: "error" });
-            return;
-          } else {
-            Swal.fire({
-              title: `Your ${name.toUpperCase()} NTF has been created, it's loading`,
-              showCancelButton: false,
-            });
-          }
+          await method(name);
         } else {
           Swal.fire({
             title: `Error in name NTF`,
